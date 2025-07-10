@@ -67,4 +67,14 @@ class reader
         }
 
     }
+
+    public function flipy($y)
+    {
+        return $this->maxy - $y;
+    }
+
+    public function flipx($x)
+    {
+        return $x - $this->minx;
+    }
 }

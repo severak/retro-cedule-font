@@ -23,15 +23,16 @@ class fontgen
         $reader->read($filename);
 
         echo 'OK ' . count($reader->data) . ' entities' . PHP_EOL;
-        echo sprintf('bbox (%f,%f; %f,%f)', $reader->minx, $reader->miny, $reader->maxy, $reader->maxy) . PHP_EOL;
+        echo sprintf('bbox (%f,%f; %f,%f)', $reader->minx, $reader->miny, $reader->maxx, $reader->maxy) . PHP_EOL;
+        echo sprintf('w=%f h=%f', $reader->maxx - $reader->minx, $reader->maxy - $reader->miny) . PHP_EOL;
 
-        $gd = imagecreate(300, 700);
+        $gd = imagecreate($reader->maxx - $reader->minx, $reader->maxy - $reader->miny);
         $white = imagecolorallocate($gd, 255,255,255);
         $black = imagecolorallocate($gd, 0,0,0);
         foreach ($reader->data as $obj) {
             if ($obj instanceof \dxfu\line) {
-                echo sprintf('line %f,%f -> %f,%f', $obj->ax, ($obj->ay), $obj->bx, ($obj->by)). PHP_EOL;
-                imageline($gd,  $obj->ax, ($obj->ay), $obj->bx, ($obj->by), $black);
+                echo sprintf('line %f,%f -> %f,%f', $reader->flipx($obj->ax), $reader->flipy($obj->ay), $reader->flipx($obj->bx), $reader->flipy($obj->by)). PHP_EOL;
+                imageline($gd,  $reader->flipx($obj->ax), $reader->flipy($obj->ay), $reader->flipx($obj->bx), $reader->flipy($obj->by), $black);
             }
         }
         imagepng($gd, 'glyphtest.png');
