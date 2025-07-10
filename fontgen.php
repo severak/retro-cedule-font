@@ -21,7 +21,16 @@ class fontgen
     {
         $reader = new dxfu\reader();
         $reader->read($filename);
-        var_dump($reader->data);
+
+        $gd = imagecreate(300, 700);
+        $white = imagecolorallocate($gd, 255,255,255);
+        $black = imagecolorallocate($gd, 0,0,0);
+        foreach ($reader->data as $obj) {
+            if ($obj instanceof \dxfu\line) {
+                imageline($gd, $obj->ax, $obj->ay, $obj->bx, $obj->by, $black);
+            }
+        }
+        imagepng($gd, 'glyphtext.png');
     }
 
     /**
