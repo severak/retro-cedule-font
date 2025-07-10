@@ -12,4 +12,10 @@ I find his project very interesting and I wanted to recreate something similar s
 
 - document my workflow
 - commit some letters
-- construct some code to convert DXF to SVG
+- construct some code to convert DXF to SVG_
+
+## licenses
+
+- everything in `glyphs` dir (and all derived font files is under SIL license)
+- everything else (especially code but also documentation) is under MIT license
+- original fonts enamel signs which I am trying to recreate were designed by anonymous workers based on Richard Pípal work, I have no rights to those
