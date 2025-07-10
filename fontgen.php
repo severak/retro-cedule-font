@@ -22,15 +22,19 @@ class fontgen
         $reader = new dxfu\reader();
         $reader->read($filename);
 
+        echo 'OK ' . count($reader->data) . ' entities' . PHP_EOL;
+        echo sprintf('bbox (%f,%f; %f,%f)', $reader->minx, $reader->miny, $reader->maxy, $reader->maxy) . PHP_EOL;
+
         $gd = imagecreate(300, 700);
         $white = imagecolorallocate($gd, 255,255,255);
         $black = imagecolorallocate($gd, 0,0,0);
         foreach ($reader->data as $obj) {
             if ($obj instanceof \dxfu\line) {
-                imageline($gd, $obj->ax, $obj->ay, $obj->bx, $obj->by, $black);
+                echo sprintf('line %f,%f -> %f,%f', $obj->ax, ($obj->ay), $obj->bx, ($obj->by)). PHP_EOL;
+                imageline($gd,  $obj->ax, ($obj->ay), $obj->bx, ($obj->by), $black);
             }
         }
-        imagepng($gd, 'glyphtext.png');
+        imagepng($gd, 'glyphtest.png');
     }
 
     /**
