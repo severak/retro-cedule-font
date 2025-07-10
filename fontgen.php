@@ -19,7 +19,9 @@ class fontgen
      */
     public function glyphtest($filename)
     {
-        echo 'Not yet implemented!';
+        $reader = new dxfu\reader();
+        $reader->read($filename);
+        var_dump($reader->data);
     }
 
     /**
