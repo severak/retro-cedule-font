@@ -10,6 +10,15 @@ Font designer Ondrej Jób went into this rabbit hole and discovered [how these s
 
 I find his project very interesting and I wanted to recreate something similar so this is my attempt to do so.
 
+## status
+
+![](specimen/abeceda.png)
+
+- rough draft of all letters
+- still needs more work (how to make good looking B and Q?)
+- tooling needs to be improved
+- **not yet usable in real life**
+
 ## workflow
 
 1. gather some reference material (photos of old Czechoslovak enamel signs)
