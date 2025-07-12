@@ -93,4 +93,34 @@ class fontgen
     }
 }
 
+// TODO - this should be in it's own file
+function set_layer($properties)
+{
+    if (isset($properties['building'])) {
+        return 'building';
+    }
+
+    if (isset($properties['highway'])) {
+        return 'highway';
+    }
+
+    if (isset($properties['railway'])) {
+        return 'railway';
+    }
+
+    if (isset($properties['waterway'])) {
+        return 'waterway';
+    }
+
+    if (isset($properties['landuse'])) {
+        return 'landuse_' . $properties['landuse'];
+    }
+
+    if (isset($properties['natural'])) {
+        return 'natural_' . $properties['natural'];
+    }
+
+    return 'other';
+}
+
 \severak\cligen\app::run(new fontgen());
