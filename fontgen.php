@@ -76,6 +76,21 @@ class fontgen
     {
         echo 'Not yet implemented!';
     }
+
+    /**
+     * Converts GEOJSON to DXF. Experimental and very hacky.
+     *
+     * @param string $geojson Input file.
+     * @param string $out     Output file.
+     * @param int    $zoom    Zoom for map (as in OSM).
+     * @return void
+     */
+    public function osm2dxf($geojson, $out='out.dxf', $zoom=14)
+    {
+        $importer = new dxfu\geojson();
+        $drawing = $importer->import($geojson, $zoom);
+        $importer->export($drawing, $out);
+    }
 }
 
 \severak\cligen\app::run(new fontgen());
