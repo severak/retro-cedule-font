@@ -21,22 +21,24 @@ class fontgen
      */
     public function topng($dxf, $out='out.png', $margin=0, $grid=0, $debug=false)
     {
-        $reader = new dxfu\reader();
-        $reader->read($dxf);
+        $reader0 = new dxfu\reader();
+        $drawing = $reader0->read($dxf);
 
-        echo 'OK ' . count($reader->data) . ' entities' . PHP_EOL;
-        echo sprintf('bbox (%f,%f; %f,%f)', $reader->minx, $reader->miny, $reader->maxx, $reader->maxy) . PHP_EOL;
-        echo sprintf('w=%f h=%f', $reader->maxx - $reader->minx, $reader->maxy - $reader->miny) . PHP_EOL;
+        echo 'OK ' . count($drawing->entities) . ' entities' . PHP_EOL;
+        echo sprintf('bbox (%f,%f; %f,%f)', $drawing->minx, $drawing->miny, $drawing->maxx, $drawing->maxy) . PHP_EOL;
+        echo sprintf('w=%f h=%f', $drawing->maxx - $drawing->minx, $drawing->maxy - $drawing->miny) . PHP_EOL;
 
         if ($margin>0) {
             echo sprintf('adding margin %d', $margin) . PHP_EOL;
-            $reader->minx -= $margin;
-            $reader->miny -= $margin;
-            $reader->maxx += $margin;
-            $reader->maxy += $margin;
+            $drawing->minx -= $margin;
+            $drawing->miny -= $margin;
+            $drawing->maxx += $margin;
+            $drawing->maxy += $margin;
+            $drawing->width += ($margin * 2);
+            $drawing->height += ($margin * 2);
         }
 
-        $gd = imagecreate($reader->maxx - $reader->minx, $reader->maxy - $reader->miny);
+        $gd = imagecreate($drawing->width, $drawing->height);
         // TODO - have colors configurable
         $white = imagecolorallocate($gd, 255,255,255);
         $black = imagecolorallocate($gd, 0,0,0);
@@ -44,21 +46,21 @@ class fontgen
 
         if ($grid > 0) {
             // grid rows
-            for ($x = 0; $x <= $reader->maxy - $reader->miny; $x = $x + $grid) {
-                imageline($gd, 0, $x, $reader->maxx - $reader->minx, $x, $lightblue);
+            for ($x = 0; $x <= $drawing->height; $x = $x + $grid) {
+                imageline($gd, 0, $x, $drawing->width, $x, $lightblue);
             }
             // grid columns
-            for ($y = 0; $y <= $reader->maxx - $reader->minx; $y = $y + $grid) {
-                imageline($gd, $y, 0, $y, $reader->maxy - $reader->miny, $lightblue);
+            for ($y = 0; $y <= $drawing->width; $y = $y + $grid) {
+                imageline($gd, $y, 0, $y, $drawing->height, $lightblue);
             }
         }
 
-        foreach ($reader->data as $obj) {
+        foreach ($drawing->entities as $obj) {
             if ($obj instanceof \dxfu\line) {
                 if ($debug) {
-                    echo sprintf('line %f,%f -> %f,%f', $reader->flipx($obj->ax), $reader->flipy($obj->ay), $reader->flipx($obj->bx), $reader->flipy($obj->by)). PHP_EOL;
+                    echo sprintf('line %f,%f -> %f,%f', $drawing->flipX($obj->ax), $drawing->flipY($obj->ay), $drawing->flipX($obj->bx), $drawing->flipY($obj->by)). PHP_EOL;
                 }
-                imageline($gd,  $reader->flipx($obj->ax), $reader->flipy($obj->ay), $reader->flipx($obj->bx), $reader->flipy($obj->by), $black);
+                imageline($gd,  $drawing->flipX($obj->ax), $drawing->flipY($obj->ay), $drawing->flipX($obj->bx), $drawing->flipY($obj->by), $black);
             }
         }
         imagepng($gd, $out);

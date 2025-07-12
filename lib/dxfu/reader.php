@@ -2,18 +2,17 @@
 namespace dxfu;
 class reader
 {
-    public $data = [];
-    public $minx = 0;
-    public $maxx = 0;
-    public $miny = 0;
-    public $maxy = 0;
-
     public function read($filename)
     {
+        $drawing = new drawing();
+
         $obj = new \stdClass();
 
         $file = new \SplFileObject($filename);
         while ($groupCode = $file->fgets()) {
+            // TODO - track sections
+            // and in HEADER fill $drawing->headerVariables
+
             // Apparently - DXF files are just pairs of keys and values.
             // Keys are so called group codes and these are numbered.
 
@@ -24,7 +23,7 @@ class reader
             if ($groupCode == 0) {
                 if (!$obj instanceof \stdClass) {
                     // if previous object was something diferent than stdClass, push it to data
-                    $this->data[] = $obj;
+                    $drawing->entities[] = $obj;
                     $obj = new \stdClass();
                 }
 
@@ -51,30 +50,8 @@ class reader
             }
         }
 
-        // get bbox of whole file
-        foreach ($this->data as $obj) {
-            if ($obj->ax < $this->minx) $this->minx = $obj->ax;
-            if ($obj->ay < $this->miny) $this->miny = $obj->ay;
-            if ($obj->ax > $this->maxx) $this->maxx = $obj->ax;
-            if ($obj->ay > $this->maxy) $this->maxy = $obj->ay;
+        $drawing->updateBbox();
 
-            if (isset($obj->bx) && isset($obj->by)) {
-                if ($obj->bx < $this->minx) $this->minx = $obj->bx;
-                if ($obj->by < $this->miny) $this->miny = $obj->by;
-                if ($obj->bx > $this->maxx) $this->maxx = $obj->bx;
-                if ($obj->by > $this->maxy) $this->maxy = $obj->by;
-            }
-        }
-
-    }
-
-    public function flipy($y)
-    {
-        return $this->maxy - $y;
-    }
-
-    public function flipx($x)
-    {
-        return $x - $this->minx;
+        return $drawing;
     }
 }
