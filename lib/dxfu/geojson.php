@@ -115,6 +115,25 @@ class geojson
 
         array_push($out, 0, 'ENDTAB'); // end of LAYER table
 
+        // STYLE (FONT) TABLE
+        array_push($out, 0, 'TABLE');
+        array_push($out, 2, 'STYLE');
+
+        // dummy text style
+        array_push($out, 0, 'STYLE');
+        array_push($out, 2, 'dummy');
+        array_push($out, 40, 0); // not fixed height
+        array_push($out, 41, 1); // width
+        array_push($out, 50, 0); // Oblique angle
+        array_push($out, 71, 0); // Text generation flags:
+        array_push($out, 42, 10); // Last height used
+        array_push($out, 3, 'Arial'); // Primary font file name
+        array_push($out, 4, 0); // Bigfont file name; blank if none
+        // array_push($out, 42, 0); //
+
+
+        array_push($out, 0, 'ENDTAB'); // end of STYLE table
+
         $out[] = '  0';
         $out[] = 'ENDSEC';
 
@@ -141,93 +160,39 @@ class geojson
             }
 
             if ($entity instanceof polyline) {
-                // TODO - HATCH
-                // https://github.com/dotoritos-kim/dxf-json/blob/main/src/parser/entities/hatch/index.ts
+                // HATCH is not working yet, IDKY why
                 // https://help.autodesk.com/view/OARX/2024/ENU/?guid=GUID-C6C71CED-CE0F-4184-82A5-07AD6241F15B
 
-                /**
-                0 - HATCH
-                5 - 2E // handle?
-                100 - AcDbEntity
-                67 -0 // ?
-                8 - 0 // layer
-                6 - ByLayer // line type
-                62 - 256 // color
-                370 - -1 // Lineweight enum value. Stored and moved around as a 16-bit integer.
-                100 - AcDbHatch
-                10 - 0.000000 //Elevation point (in OCS)
-                20 - 0.000000
-                30 - 0.000000
-                210 - 0.000000 // extrusion
-                220 - 0.000000
-                230 - 1.000000
-                2 - USER_DEF
-                70 - 0 // Solid fill flag (0 = pattern fill; 1 = solid fill); for MPolygon, the version of MPolygon
-                71 - 0 // Associativity flag (0 = non-associative; 1 = associative); for MPolygon, solid-fill flag (0 = lacks solid fill; 1 = has solid fill)
-                91 - 1 // Number of boundary paths (loops)
-                92 - 0 //
-                93 - 3
-                72 - 1
+                if ($entity->isClosed() && false) {
+                    array_push($out, 0, 'HATCH');
+                    array_push($out, 8, $entity->layer);
+                    array_push($out, 76, 1); // predefined hatch
+                    array_push($out, 2, 'ANSI31'); // Hatch pattern name
 
-                ; layers
-                10 - 10.000000
-                20 - 20.000000
-                11 -0.000000
-                21 - 10.000000
-                72 - 1
-                10 - 0.000000
-                20 - 10.000000
-                11 - 10.000000
-                21 - 10.000000
-                72 - 1
-                10
-                10.000000
-                20
-                10.000000
-                11
-                10.000000
-                21
-                20.000000
-                97
-                0
-                75
-                0
-                76
-                0
-                52
-                0.000000
-                41
-                1.000000
-                77
-                0
-                78
-                1
-                53
-                45.000000
-                43
-                0.000000
-                44
-                0.000000
-                45
-                -0.707107
-                46
-                0.707107
-                79
-                0
-                98
-                0
-                 */
+                    array_push($out, 70, 0); // solid fill flag
+                    array_push($out, 91, 1); // Number of boundary paths (loops)
+                    array_push($out, 92, 2); // boundary = polyline
+                    array_push($out, 93, count($entity->points)); // number of edges in this path
 
-                $out[] = '  0';
-                $out[] = 'LWPOLYLINE';
-                $out[] = '  8';
-                $out[] = $entity->layer;
-                foreach ($entity->points as $point) {
-                    $out[] = ' 10';
-                    $out[] = $point->x;
-                    $out[] = ' 20';
-                    $out[] = $point->y;
+                    foreach ($entity->points as $point) {
+                        array_push($out, 10, $point->x);
+                        array_push($out, 20, $point->y);
+                    }
+                    array_push($out, 73, 1); // is closed
+                } else {
+                    $out[] = '  0';
+                    $out[] = 'LWPOLYLINE';
+                    $out[] = '  8';
+                    $out[] = $entity->layer;
+                    foreach ($entity->points as $point) {
+                        $out[] = ' 10';
+                        $out[] = $point->x;
+                        $out[] = ' 20';
+                        $out[] = $point->y;
+                    }
                 }
+
+
             }
         }
 
