@@ -83,13 +83,14 @@ class fontgen
      * @param string $geojson Input file.
      * @param string $out     Output file.
      * @param int    $zoom    Zoom for map (as in OSM).
-     * @return void
+     * @param bool   $hatches Use hatches? (Don't work in all CADs)
+     * @param bool   $tables  Include dummy tables?
      */
-    public function osm2dxf($geojson, $out='out.dxf', $zoom=14)
+    public function osm2dxf($geojson, $out='out.dxf', $zoom=14, $hatches=false, $tables=false)
     {
         $importer = new dxfu\geojson();
         $drawing = $importer->import($geojson, $zoom);
-        $importer->export($drawing, $out);
+        $importer->export($drawing, $out, $hatches, $tables);
     }
 }
 
