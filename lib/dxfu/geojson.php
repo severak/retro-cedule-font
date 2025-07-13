@@ -60,19 +60,65 @@ class geojson
         $out[] = '999';
         $out[] = 'Export by DXFu';
 
-        // TODO - we should define at least layers, linetypes and colors make CadZinho happy
+        $out[] = '  0';
+        $out[] = 'SECTION';
+        $out[] = '  2';
+        $out[] = 'HEADER';
+        $out[] = '  0';
+        $out[] = 'ENDSEC';
 
-        /*
-        foreach (['HEADER', 'TABLES', 'BLOCKS'] as $emptySectionName) {
-            $out[] = '  0';
-            $out[] = 'SECTION';
-            $out[] = '  2';
-            $out[] = $emptySectionName;
-            $out[] = '  0';
-            $out[] = 'ENDSEC';
+        // tables section
+        $out[] = '  0';
+        $out[] = 'SECTION';
+        $out[] = '  2';
+        $out[] = 'TABLES';
+
+        // LTYPE table (static one to keep CadZinho happy)
+        array_push($out, 0, 'TABLE');
+        array_push($out, 2, 'LTYPE');
+
+        // continuous line type (static)
+        array_push($out, 0, 'LTYPE');
+        array_push($out, 100, 'AcDbSymbolTableRecord');
+        array_push($out, 100, 'AcDbLinetypeTableRecord');
+        array_push($out, 2, 'Continuous'); // name
+        array_push($out, 70, 0); // flag
+        array_push($out, 3, '___________________________________'); // description
+        array_push($out, 72, 65); // alingment A
+        array_push($out, 73, 0); // number of dashes - none
+        array_push($out, 40, 0); // pattern length - none
+        array_push($out, 0, 'ENDTAB'); // end of LTYPE table
+
+        $layernames = [];
+        foreach ($drawing->entities as $entity) {
+            if (!in_array($entity->layer, $layernames)) {
+                echo 'layer ' . $entity->layer . PHP_EOL;
+                $layernames[] = $entity->layer;
+            }
         }
-        */
 
+        // LAYER TABLE
+        array_push($out, 0, 'TABLE');
+        array_push($out, 2, 'LAYER');
+
+        foreach ($layernames as $name) {
+            array_push($out, 0, 'LAYER');
+            // array_push($out, 5, 11); // handle
+            array_push($out, 100, 'AcDbSymbolTableRecord');
+            array_push($out, 100, 'AcDbLayerTableRecord');
+            array_push($out, 2, $name);
+            array_push($out, 70, 0); // flag
+            // array_push($out, 62, 0); // color number
+            array_push($out, 6, 'Continuous'); // line type
+
+        }
+
+        array_push($out, 0, 'ENDTAB'); // end of LAYER table
+
+        $out[] = '  0';
+        $out[] = 'ENDSEC';
+
+        // entities section
         $out[] = '  0';
         $out[] = 'SECTION';
         $out[] = '  2';
