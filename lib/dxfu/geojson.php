@@ -141,6 +141,83 @@ class geojson
             }
 
             if ($entity instanceof polyline) {
+                // TODO - HATCH
+                // https://github.com/dotoritos-kim/dxf-json/blob/main/src/parser/entities/hatch/index.ts
+                // https://help.autodesk.com/view/OARX/2024/ENU/?guid=GUID-C6C71CED-CE0F-4184-82A5-07AD6241F15B
+
+                /**
+                0 - HATCH
+                5 - 2E // handle?
+                100 - AcDbEntity
+                67 -0 // ?
+                8 - 0 // layer
+                6 - ByLayer // line type
+                62 - 256 // color
+                370 - -1 // Lineweight enum value. Stored and moved around as a 16-bit integer.
+                100 - AcDbHatch
+                10 - 0.000000 //Elevation point (in OCS)
+                20 - 0.000000
+                30 - 0.000000
+                210 - 0.000000 // extrusion
+                220 - 0.000000
+                230 - 1.000000
+                2 - USER_DEF
+                70 - 0 // Solid fill flag (0 = pattern fill; 1 = solid fill); for MPolygon, the version of MPolygon
+                71 - 0 // Associativity flag (0 = non-associative; 1 = associative); for MPolygon, solid-fill flag (0 = lacks solid fill; 1 = has solid fill)
+                91 - 1 // Number of boundary paths (loops)
+                92 - 0 //
+                93 - 3
+                72 - 1
+
+                ; layers
+                10 - 10.000000
+                20 - 20.000000
+                11 -0.000000
+                21 - 10.000000
+                72 - 1
+                10 - 0.000000
+                20 - 10.000000
+                11 - 10.000000
+                21 - 10.000000
+                72 - 1
+                10
+                10.000000
+                20
+                10.000000
+                11
+                10.000000
+                21
+                20.000000
+                97
+                0
+                75
+                0
+                76
+                0
+                52
+                0.000000
+                41
+                1.000000
+                77
+                0
+                78
+                1
+                53
+                45.000000
+                43
+                0.000000
+                44
+                0.000000
+                45
+                -0.707107
+                46
+                0.707107
+                79
+                0
+                98
+                0
+                 */
+
                 $out[] = '  0';
                 $out[] = 'LWPOLYLINE';
                 $out[] = '  8';
