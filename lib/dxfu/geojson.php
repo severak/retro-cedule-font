@@ -17,7 +17,7 @@ class geojson
             } elseif ($feature['geometry']['type']=='Polygon') {
                 $coords = $feature['geometry']['coordinates'][0];
             } else {
-                echo $feature['geometry']['type'] . ' not supported yet' . PHP_EOL;
+                //echo $feature['geometry']['type'] . ' not supported yet' . PHP_EOL;
             }
 
             if (count($coords) > 0) {

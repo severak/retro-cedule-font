@@ -90,6 +90,18 @@ class fontgen
     {
         $importer = new dxfu\geojson();
         $drawing = $importer->import($geojson, $zoom);
+
+        if (function_exists('layer_order')) {
+            $oldDrawing = $drawing;
+            $drawing = new \dxfu\drawing();
+            foreach (layer_order() as $layer) {
+                foreach ($oldDrawing->entities as $entity) {
+                    if ($entity->layer==$layer) {
+                        $drawing->entities[] = $entity;
+                    }
+                }
+            }
+        }
         $importer->export($drawing, $out, $hatches, $tables);
     }
 }
@@ -122,6 +134,39 @@ function set_layer($properties)
     }
 
     return 'other';
+}
+
+function layer_order()
+{
+$layers = <<<LAYERS
+landuse_orchard
+landuse_garages
+landuse_farmyard
+landuse_plant_nursery
+landuse_brownfield
+landuse_reservoir
+landuse_railway
+landuse_flowerbed
+landuse_forest
+landuse_farmland
+landuse_meadow
+landuse_residential
+landuse_quarry
+landuse_village_green
+landuse_cemetery
+landuse_grass
+landuse_industrial
+landuse_basin
+landuse_allotments
+landuse_recreation_ground
+waterway
+natural_water
+building
+highway
+railway
+LAYERS;
+    return explode(PHP_EOL, $layers);
+
 }
 
 \severak\cligen\app::run(new fontgen());
