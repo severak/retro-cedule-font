@@ -85,9 +85,12 @@ class fontgen
      * @param int    $zoom    Zoom for map (as in OSM).
      * @param bool   $hatches Use hatches? (Don't work in all CADs)
      * @param bool   $tables  Include dummy tables?
+     * @param string $style   PHP file to make style of the map.
      */
-    public function osm2dxf($geojson, $out='out.dxf', $zoom=14, $hatches=false, $tables=false)
+    public function osm2dxf($geojson, $out='map.dxf', $zoom=14, $hatches=false, $tables=false, $style='maps/basemap.php')
     {
+        include $style;
+
         $importer = new dxfu\geojson();
         $drawing = $importer->import($geojson, $zoom);
 
@@ -104,69 +107,6 @@ class fontgen
         }
         $importer->export($drawing, $out, $hatches, $tables);
     }
-}
-
-// TODO - this should be in it's own file
-function set_layer($properties)
-{
-    if (isset($properties['building'])) {
-        return 'building';
-    }
-
-    if (isset($properties['highway'])) {
-        return 'highway';
-    }
-
-    if (isset($properties['railway'])) {
-        return 'railway';
-    }
-
-    if (isset($properties['waterway'])) {
-        return 'waterway';
-    }
-
-    if (isset($properties['landuse'])) {
-        return 'landuse_' . $properties['landuse'];
-    }
-
-    if (isset($properties['natural'])) {
-        return 'natural_' . $properties['natural'];
-    }
-
-    return 'other';
-}
-
-function layer_order()
-{
-$layers = <<<LAYERS
-landuse_orchard
-landuse_garages
-landuse_farmyard
-landuse_plant_nursery
-landuse_brownfield
-landuse_reservoir
-landuse_railway
-landuse_flowerbed
-landuse_forest
-landuse_farmland
-landuse_meadow
-landuse_residential
-landuse_quarry
-landuse_village_green
-landuse_cemetery
-landuse_grass
-landuse_industrial
-landuse_basin
-landuse_allotments
-landuse_recreation_ground
-waterway
-natural_water
-building
-highway
-railway
-LAYERS;
-    return explode(PHP_EOL, $layers);
-
 }
 
 \severak\cligen\app::run(new fontgen());
