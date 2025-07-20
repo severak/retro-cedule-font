@@ -107,6 +107,32 @@ class fontgen
         }
         $importer->export($drawing, $out, $hatches, $tables);
     }
+
+    /**
+     * Converts DXF to Graph paper format v1.
+     *
+     * @param string $dxf Input file.
+     * @param string $out Output file.
+     */
+    public function dxf2gp($dxf, $out='out.gp')
+    {
+        $reader = new dxfu\reader();
+        $drawing = $reader->read($dxf);
+
+        $gp = [];
+        foreach ($drawing->entities as $entity) {
+            if ($entity instanceof dxfu\line) {
+                $gp[] = sprintf('L %d %d %d %d', $drawing->flipX($entity->ax), $drawing->flipY($entity->ay), $drawing->flipX($entity->bx), $drawing->flipY($entity->by));
+            } elseif ($entity instanceof \dxfu\point) {
+                $gp[] = sprintf('P %d %d', $drawing->flipX($entity->x), $drawing->flipY($entity->y));
+            } elseif ($entity instanceof dxfu\circle) {
+                $gp[] = sprintf('C %d %d %d', $drawing->flipX($entity->x), $drawing->flipY($entity->y), $entity->r);
+            }
+        }
+        file_put_contents($out, implode(PHP_EOL, $gp));
+
+        echo 'OK';
+    }
 }
 
 \severak\cligen\app::run(new fontgen());
