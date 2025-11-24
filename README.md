@@ -29,6 +29,8 @@ I find his project very interesting and I wanted to recreate something similar s
 
 There is single `fontgen.php` file provided which can be used with PHP 7+. Use it from command line as `php fontgen.php --help`. All dependencies are included in this repo, you dont need to install anything.
 
+Or use [FontStruct](https://fontstruct.com/) to assemble this font. I am probably going this way from now.
+
 ## licenses
 
 - everything in `glyphs` dir (and all derived font files are under SIL license)
